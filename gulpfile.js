@@ -8,7 +8,8 @@ const {
 const eslint = require("gulp-eslint");
 const babel = require("gulp-babel");
 const rename = require("gulp-rename");
-const uglify = require('gulp-uglify-es').default;
+const uglify = require("gulp-uglify-es").default;
+const copy = require("gulp-copy");
 
 function lint() {
   return (
@@ -53,7 +54,13 @@ function minify() {
     .pipe(dest("dist"))
 }
 
+function cp() {
+  return src(['*.html', 'images/*'])
+    .pipe(copy('dist'))
+}
+
 exports.lint = lint;
 exports.transpile = transpile;
 exports.minify = minify;
-exports.default = parallel(lint, series(transpile, minify));
+exports.copy = cp;
+exports.default = parallel(lint, series(transpile, minify), cp);
