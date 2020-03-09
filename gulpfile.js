@@ -3,6 +3,7 @@ const {
   dest,
   parallel,
   series,
+  watch,
 } = require("gulp");
 
 const eslint = require("gulp-eslint");
@@ -46,7 +47,7 @@ function transpile() {
 }
 
 function minify() {
-  return src(["dist/*.js"])
+  return src(["dist/blog.js", "dist/functions.js"])
     .pipe(uglify())
     .pipe(rename({
       extname: '.min.js'
@@ -55,12 +56,29 @@ function minify() {
 }
 
 function cp() {
-  return src(['*.html', 'images/*'])
+  // images/
+  //   image.jpg
+  //   image_two.jpg
+  //   icons/icon.svg
+  // images/* -> ['image.jpg', 'image_two.jpg']
+  // images/**/* -> ['image.jpg', 'image_two.jpg', 'icons/icon.svg']
+  // **/* any directory inside images (in this example, anything with a star is the root directory)
+  return src(['index.html', 'blog.html', 'images/*'])
     .pipe(copy('dist'))
+}
+
+function watcher() {
+  // Glob -> regex pattern
+  // Regular Expressions -> regex
+  watch(['blog.js', 'function.js'], series(transpile, minify));
+
+  // Assets/Resources
+  watch(['index.html', 'blog.html', 'images/*'], series(cp));
 }
 
 exports.lint = lint;
 exports.transpile = transpile;
 exports.minify = minify;
 exports.copy = cp;
-exports.default = parallel(lint, series(transpile, minify), cp);
+exports.watcher = watcher;
+exports.default = series(parallel(lint, series(transpile, minify), cp), watcher);
