@@ -1,10 +1,11 @@
-const api = 'https://us-central1-open-classrooms-js-for-the-web.cloudfunctions.net/widgets';
-const loadButton = document.getElementById('load-button');
+const api =
+  "https://us-central1-open-classrooms-js-for-the-web.cloudfunctions.net/widgets";
+const loadButton = document.getElementById("load-button");
 
 function getRequest(url) {
   return new Promise((resolve, reject) => {
     let request = new XMLHttpRequest();
-    request.open('GET', url);
+    request.open("GET", url);
     request.onreadystatechange = () => {
       if (request.readyState === 4) {
         if (request.status !== 200) {
@@ -18,30 +19,37 @@ function getRequest(url) {
 }
 
 async function getBlogPost() {
-  const titlePromise = getRequest(api + '/generate-title');
-  const loremPromise = getRequest(api + '/generate-lorem');
+  const titlePromise = getRequest(api + "/generate-title");
+  const loremPromise = getRequest(api + "/generate-lorem");
   try {
-    let [titleResponse, loremResponse] = await Promise.all([titlePromise, loremPromise]);
-    document.querySelector('main').appendChild(buildPostElement(titleResponse.title, loremResponse.lorem));
+    let [titleResponse, loremResponse] = await Promise.all([
+      titlePromise,
+      loremPromise
+    ]);
+    document
+      .querySelector("main")
+      .appendChild(buildPostElement(titleResponse.title, loremResponse.lorem));
   } catch (error) {
-    document.querySelector('main').appendChild(buildPostElement('An error occurred!', error));
+    document
+      .querySelector("main")
+      .appendChild(buildPostElement("An error occurred!", error));
   }
 }
 
-loadButton.addEventListener('click', async function () {
+loadButton.addEventListener("click", async function() {
   getBlogPost();
 });
 
 function buildPostElement(title, content) {
-  let card = document.createElement('div');
-  let cardBody = document.createElement('div');
-  let cardTitle = document.createElement('h2');
-  let cardContent = document.createElement('p');
+  let card = document.createElement("div");
+  let cardBody = document.createElement("div");
+  let cardTitle = document.createElement("h2");
+  let cardContent = document.createElement("p");
 
-  card.classList.add('card');
-  cardBody.classList.add('card-body');
-  cardTitle.classList.add('card-title');
-  cardContent.classList.add('card-text');
+  card.classList.add("card");
+  cardBody.classList.add("card-body");
+  cardTitle.classList.add("card-title");
+  cardContent.classList.add("card-text");
 
   cardTitle.textContent = title;
   cardContent.textContent = content;
@@ -52,5 +60,3 @@ function buildPostElement(title, content) {
 
   return card;
 }
-
-console.log('updated ...');
